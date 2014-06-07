@@ -2,21 +2,26 @@ require 'spec_helper'
 
 describe Phone do
   it "does not allow duplicate phone numbers per contact" do
-    contact = Contact.create(firstname: "Charles", lastname: "Xavier", email: "prof@xmen.com")
+    contact = create(:contact)
 
-    contact.phones.create(phone_type: "home", phone: "408-666-1212")
-    mobile_phone = contact.phones.build(phone_type: "mobile", phone: "408-666-1212" )
+    create(:home_phone,
+      contact: contact,
+      phone: "408-666-9999")
+
+    mobile_phone = build(:mobile_phone,
+      contact: contact,
+      phone: "408-666-9999")
 
     expect(mobile_phone).to have(1).errors_on(:phone)
   end
 
   it "allows two contacts to share a phone number" do
-    contact1 = Contact.create(firstname: "Charles", lastname: "Xavier", email: "prof@xmen.com")
-    contact1.phones.create(phone_type: "home", phone: "408-666-1212")
+    contact1 = create(:contact)
+    phone1   = create(:home_phone, contact: contact1, phone: "408-666-9999")
 
-    contact2 = Contact.create(firstname: "Scott", lastname: "Summers",email: "scott@xmen.com")
-    phone = contact2.phones.build(phone_type: "home", phone: "408-666-1212")
+    contact2 = build(:contact)
+    phone2   = build(:home_phone, contact: contact2, phone: "408-666-9999")
 
-    expect(phone).to be_valid
+    expect(phone2).to be_valid
   end
 end

@@ -2,51 +2,52 @@ require 'spec_helper'
 
 describe Contact do
   it "has a valid factory" do
-    expect(FactoryGirl.build(:contact)).to be_valid
+    expect(build(:contact)).to be_valid
   end
 
   it "is valid with a firstname, lastname and email" do
-    contact = Contact.new(
-      firstname: "Charles",
-      lastname:  "Xavier",
-      email:     "prof@xmen.com"
-    )
+    contact = create(:contact)
     expect(contact).to be_valid
   end
 
   it "is invalid without a firstname" do
-    contact = FactoryGirl.build(:contact, firstname: nil)
+    contact = build(:contact, firstname: nil)
     expect(contact).to have(1).error_on(:firstname)
   end
 
   it "is invalid without a lastname" do
-    contact = FactoryGirl.build(:contact, lastname: nil)
+    contact = build(:contact, lastname: nil)
     expect(contact).to have(1).error_on(:lastname)
   end
 
   it "is invalid without an email address" do
-    contact = FactoryGirl.build(:contact, email: nil)
+    contact = build(:contact, email: nil)
     expect(contact).to have(1).error_on(:email)
   end
 
   it "is invalid with a duplicate email address" do
-    FactoryGirl.create(:contact, email: "hankmcoy@xmen.com")
-    contact = FactoryGirl.build(:contact, email: "hankmcoy@xmen.com")
+    create(:contact, email: "hankmcoy@xmen.com")
+    contact = build(:contact, email: "hankmcoy@xmen.com")
 
     expect(contact).to have(1).error_on(:email)
   end
 
   it "returns a contact's full name as a string" do
-    contact = FactoryGirl.build(:contact)
+    contact = build(:contact, firstname: "Charles", lastname: "Xavier")
 
-    expect(contact.name).to eq "Hank Mcoy"
+    expect(contact.name).to eq "Charles Xavier"
+  end
+
+  it "has three phone numbers when created" do
+    contact = create(:contact)
+    expect(contact.phones.count).to eq 3
   end
 
   describe "filter lastname by letter" do
     before :each do
-      @scott = Contact.create(firstname: "Scott", lastname: "Summers", email: "scott@xmen.com")
-      @jean  = Contact.create(firstname: "Jean",  lastname: "Gray",    email: "jean@xmen.com")
-      @kevin = Contact.create(firstname: "Kevin", lastname: "Sydney", email: "kevin@xmen.com")
+      @scott = create(:contact, firstname: "Scott", lastname: "Summers")
+      @jean  = create(:contact, firstname: "Jean",  lastname: "Gray")
+      @kevin = create(:contact, firstname: "Kevin", lastname: "Sydney")
     end
 
     context "matching letters" do

@@ -1,5 +1,5 @@
 class ContactsController < ApplicationController
-  before_action :authenticate, except: [:index, :show]
+  # before_action :authenticate, except: [:index, :show]
   before_action :set_contact, only: [:show, :edit, :update, :destroy]
 
   # GET /contacts
@@ -67,6 +67,16 @@ class ContactsController < ApplicationController
       format.html { redirect_to contacts_url }
       format.json { head :no_content }
     end
+  end
+
+  # Custom Actions
+
+  def hide_contact
+    @contact = Contact.find params[:id]
+    @contact.hidden = true
+    @contact.save!
+
+    redirect_to contacts_path
   end
 
   private
