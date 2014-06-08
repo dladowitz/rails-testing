@@ -91,7 +91,7 @@ class ContactsController < ApplicationController
     def can_edit?
       unless ( @current_user.admin? || @current_user.editor? )
         flash[:error] = "Must be admin or editor to edit contacts"
-        redirect_to root_url
+        redirect_to login_path
       end
     end
 end

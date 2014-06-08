@@ -6,12 +6,7 @@ describe ContactsController do
     @charles = create(:contact, firstname: "Charles", lastname: "Xavier")
   end
 
-  describe "Administrator Access" do
-    before :each do
-      user = create(:admin)
-      session[:user_id] = user.id
-    end
-
+  shared_examples("public access to contacts") do
     describe "GET #index" do
       context "with params[:letter]" do
         it "populates an array of contacts starting with the letter" do
@@ -37,7 +32,6 @@ describe ContactsController do
         end
       end
     end
-
     describe "Get #show" do
       it "assigns the requested contact to @contatct" do
         get( :show, { id: @charles } )
@@ -49,7 +43,8 @@ describe ContactsController do
         expect(response).to render_template :show
       end
     end
-
+  end
+  shared_examples("full access to contacts") do
     describe "GET #new" do
       it "assigns a new Contact to @contact" do
         get :new
@@ -159,33 +154,43 @@ describe ContactsController do
         expect(response).to redirect_to contacts_path
       end
     end
+
+  end
+
+  describe "Administrator Access" do
+    before :each do
+      set_user_session create(:admin)
+    end
+
+    it_behaves_like "public access to contacts"
+    it_behaves_like "full access to contacts"
   end
 
   describe "Editor Access" do
     before :each do
-      @user = create(:editor)
-      session[:user_id] = @user.id
+      set_user_session create(:editor)
     end
 
-    describe "PATCH #update" do
-      it "should update attributes on the correct contact" do
-        patch :update, id: @charles, contact: { firstname: "Scott" }
-        expect(@charles.reload.firstname).to eq "Scott"
-      end
-    end
-
+    it_behaves_like "public access to contacts"
+    it_behaves_like "full access to contacts"
   end
 
   describe "Regular User Access" do
     before :each do
-      @user = create(:user)
-      session[:user_id] = @user.id
+      set_user_session create(:user)
     end
+
+    it_behaves_like "public access to contacts"
 
     describe "PATCH #update" do
       it "should not update the contact" do
         patch :update, id: @erik, contact: attributes_for(:contact)
         expect(@erik.reload.firstname).to eq "Erik"
+      end
+
+      it "requires login" do
+        patch :update, id: @erik, contact: attributes_for(:contact)
+        expect(response).to require_login
       end
 
       it "should have an error on the flash" do
@@ -195,74 +200,42 @@ describe ContactsController do
     end
   end
 
-
   describe "Guest Access" do
 
-    describe "GET #index" do
-      context "with params[:letter] passed in" do
-        it "gets an array of contacts who's last name start with the params[:letter]" do
-          get :index, letter: "X"
-          expect(assigns(:contacts)).to match_array [@charles]
-        end
-
-        it "renders the index template" do
-          get :index, letter: "X"
-          expect(response).to render_template :index
-        end
-      end
-
-      context "with params[:letter] not passed in" do
-        it "gets an array of all contacts in the database" do
-          get :index
-          expect(assigns(:contacts)).to match_array [@erik, @charles]
-        end
-      end
-    end
-
-    describe "GET #show" do
-      it "finds the correct contact in the database" do
-        get :show, id: @erik
-        expect(assigns(:contact)).to eq @erik
-      end
-
-      it "renders the show template" do
-        get :show, id: @erik
-        expect(response).to render_template :show
-      end
-    end
+    it_behaves_like "public access to contacts"
 
     describe "GET #new" do
       it "requires login" do
         get :new
-        expect(response).to redirect_to login_url
+        expect(response).to require_login
       end
     end
 
     describe "GET#edit" do
       it "requires login" do
         get :edit, id: @erik
-        expect(response).to redirect_to login_url
+        expect(response).to require_login
       end
     end
 
     describe "POST #create" do
       it "requires login" do
         post :create, contact: attributes_for(:contact)
-        expect(response).to redirect_to login_url
+        expect(response).to require_login
       end
     end
 
     describe "PUT #update" do
       it "requires login" do
         put :update, id: @erik, contact: attributes_for(:contact)
-        expect(response).to redirect_to login_url
+        expect(response).to require_login
       end
     end
 
     describe "DELETE #destroy" do
       it "requires login" do
         delete :destroy, id: @erik
-        expect(response).to redirect_to login_url
+        expect(response).to require_login
       end
     end
   end

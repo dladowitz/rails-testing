@@ -42,4 +42,7 @@ RSpec.configure do |config|
 
   # Include Factory Girl syntax to simplify calls to factories
   config.include FactoryGirl::Syntax::Methods
+
+  # Include custom login module from spec/support/
+  config.include LoginMacros
 end
