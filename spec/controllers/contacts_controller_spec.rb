@@ -161,6 +161,40 @@ describe ContactsController do
     end
   end
 
+  describe "Editor Access" do
+    before :each do
+      @user = create(:editor)
+      session[:user_id] = @user.id
+    end
+
+    describe "PATCH #update" do
+      it "should update attributes on the correct contact" do
+        patch :update, id: @charles, contact: { firstname: "Scott" }
+        expect(@charles.reload.firstname).to eq "Scott"
+      end
+    end
+
+  end
+
+  describe "Regular User Access" do
+    before :each do
+      @user = create(:user)
+      session[:user_id] = @user.id
+    end
+
+    describe "PATCH #update" do
+      it "should not update the contact" do
+        patch :update, id: @erik, contact: attributes_for(:contact)
+        expect(@erik.reload.firstname).to eq "Erik"
+      end
+
+      it "should have an error on the flash" do
+        patch :update, id: @erik, contact: attributes_for(:contact)
+        expect(flash[:error]).to eq "Must be admin or editor to edit contacts"
+      end
+    end
+  end
+
 
   describe "Guest Access" do
 

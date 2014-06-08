@@ -1,6 +1,7 @@
 class ContactsController < ApplicationController
   before_action :authenticate, except: [:index, :show]
   before_action :set_contact, only: [:show, :edit, :update, :destroy]
+  before_action :can_edit?, only: [:edit, :update, :destroy]
 
   # GET /contacts
   # GET /contacts.json
@@ -85,5 +86,12 @@ class ContactsController < ApplicationController
     def contact_params
       params.require(:contact).permit(:firstname, :lastname, :email,
         :phones_attributes => [:id, :phone, :phone_type])
+    end
+
+    def can_edit?
+      unless ( @current_user.admin? || @current_user.editor? )
+        flash[:error] = "Must be admin or editor to edit contacts"
+        redirect_to root_url
+      end
     end
 end
