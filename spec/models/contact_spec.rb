@@ -45,14 +45,16 @@ describe Contact do
 
   describe "filter lastname by letter" do
     before :each do
-      @scott = create(:contact, firstname: "Scott", lastname: "Summers")
-      @jean  = create(:contact, firstname: "Jean",  lastname: "Gray")
-      @kevin = create(:contact, firstname: "Kevin", lastname: "Sydney")
+      @scott  = create(:contact, firstname: "Scott",  lastname: "Summers")
+      @jean   = create(:contact, firstname: "Jean",   lastname: "Grey")
+      @kevin  = create(:contact, firstname: "Kevin",  lastname: "Sydney")
+      @rachel = create(:contact, firstname: "Rachel", lastname: "Summers")
+      
     end
 
     context "matching letters" do
       it "returns a sorted array of results that match" do
-        expect(Contact.by_letter("S")).to eq [@scott, @kevin]
+        expect(Contact.by_letter("S")).to eq [@scott, @rachel, @kevin]
       end
     end
 
@@ -62,5 +64,10 @@ describe Contact do
       end
     end
 
+    context "when a letter isn't given" do
+      it "returns all Contacts ordered by lastname first then by firstname" do
+        expect(Contact.by_letter).to eq [@jean, @rachel, @scott, @kevin]
+      end
+    end
   end
 end
