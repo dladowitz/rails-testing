@@ -49,6 +49,10 @@ group :development, :test do
   gem "factory_girl_rails", "~> 4.2.1"
 end
 
+group :development do
+  gem "awesome_print"
+end
+
 group :test do
   gem "faker", "~> 1.1.2"
   gem "capybara", "~> 2.1.0"
