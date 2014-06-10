@@ -51,6 +51,9 @@ end
 
 group :development do
   gem "awesome_print"
+  gem 'guard-rspec', '~> 3.0.2'
+  gem 'guard-spork', '~> 1.5.1'
+  gem 'spork-rails', github: 'sporkrb/spork-rails'
 end
 
 group :test do
