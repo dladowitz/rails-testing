@@ -1,0 +1,16 @@
+<h1>NewsReleases#new</h1>
+<p>Find me in app/views/news_releases/new.html.erb</p>
+<%= form_for(@news_release) do |f| %>
+
+      <%= f.label :title %>
+      <%= f.text_field :title %>
+
+      <%= f.label :body %>
+      <%= f.text_field :body %>
+
+    <%= f.submit "Submit", class: 'btn btn-primary' %>
+<% end %>
+
+
+
+

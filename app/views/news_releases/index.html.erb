@@ -1,0 +1,10 @@
+<h1>NewsReleases#index</h1>
+<p>Find me in app/views/news_releases/index.html.erb</p>
+<%= link_to "Add a News Release", new_news_release_path %>
+
+<% @news_releases.each do |news_release| %>
+  <br>
+  <%= news_release.title %>
+  <%= news_release.body %>
+
+<% end %>

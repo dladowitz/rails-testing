@@ -9,9 +9,9 @@ feature "News Releases" do
       expect{
         click_link "News Releases"
         click_link "Add a News Release"
-        
-
-
+        fill_in "Title", with: "I love New Releases"
+        fill_in "Body", with: "This just in......"
+        click_button "Submit"
       }.to change(NewsRelease, :count).by(1)
 
     end
